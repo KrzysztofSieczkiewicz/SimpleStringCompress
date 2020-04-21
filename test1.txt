@@ -1,0 +1,1 @@
+Jednolinijkowy plik testowy zawierający pojedynczy długi String
