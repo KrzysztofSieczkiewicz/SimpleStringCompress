@@ -11,70 +11,82 @@ public class AppGZIP {
         // Otwarcie komunikacji między użytkownikiem i programem
         try (Scanner odczyt = new Scanner(System.in)) {
 
+            System.out.println("Podaj działanie: kompresja(k), dekompresja(d), zamknij program(z)");
+            String wybor = odczyt.nextLine();
+            // Pętla menu głównego
+            switch (wybor) {
+                case "k": {
+                    // Pobieranie plików do kompresowania dopóki użytkownik nie poinformuje, że to ostatni
+                    List<String> nazwyPlikow = new ArrayList<>();
+                    boolean wystarczy = false;
+                    while (wystarczy != true) {
+                        System.out.println("Podaj nazwę pliku (z rozszerzeniem) do kompresowania lub 'koniec' żeby zacząć kompresję");
 
-            // Pobieranie plików do kompresowania dopóki użytkownik nie poinformuje, że to ostatni
-            List<String> nazwyPlikow = new ArrayList<>();
-            boolean wystarczy = false;
-            while (wystarczy != true) {
-                System.out.println("Podaj nazwę pliku (z rozszerzeniem) do kompresowania lub 'koniec' żeby zacząć kompresję");
+                        String odczytanaLinia = odczyt.nextLine();
+                        if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
+                            System.out.println("Zakończono wczytywanie plików \n");
+                            break;
+                        } else {
+                            nazwyPlikow.add(odczytanaLinia);
+                            System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
+                        }
+                    }
 
-                String odczytanaLinia = odczyt.nextLine();
-                if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
-                    System.out.println("Zakończono wczytywanie plików \n");
-                    break;
-                } else {
-                    nazwyPlikow.add(odczytanaLinia);
-                    System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
+                    System.out.println("Pliki wybrane do kompresowania");
+                    for (String nazwa : nazwyPlikow) {
+                        System.out.println(nazwa);
+                    }
+
+                    // Kompresowanie podanych plików
+                    for (String nazwa : nazwyPlikow) {
+                        StringBuilder nazwaPoKompresji = new StringBuilder();
+                        nazwaPoKompresji.append(nazwa);
+                        nazwaPoKompresji.delete(nazwaPoKompresji.length() - 4, nazwaPoKompresji.length());
+                        nazwaPoKompresji.append(".GZIP");
+                        kompresuj(nazwa, nazwaPoKompresji.toString());
+                    }
+                    System.out.println("Zakończono kompresowanie");
                 }
-            }
 
-            System.out.println("Pliki wybrane do kompresowania");
-            for (String nazwa : nazwyPlikow) {
-                System.out.println(nazwa);
-            }
+                case "d": {
+                    // Pobieranie plików do dekompresowania dopóki użytkownik nie poinformuje, że to ostatni
+                    List<String> nazwySkompresowanychPlikow = new ArrayList<>();
+                    boolean wystarczy = false;
+                    while (wystarczy != true) {
+                        System.out.println("Podaj nazwę pliku (z rozszerzeniem) do dekompresowania lub 'koniec' żeby zacząć dekompresję");
 
-            // Kompresowanie podanych plików
-            for (String nazwa : nazwyPlikow) {
-                StringBuilder nazwaPoKompresji = new StringBuilder();
-                nazwaPoKompresji.append(nazwa);
-                nazwaPoKompresji.delete(nazwaPoKompresji.length() - 4, nazwaPoKompresji.length());
-                nazwaPoKompresji.append(".GZIP");
-                kompresuj(nazwa, nazwaPoKompresji.toString());
-            }
-            System.out.println("Zakończono kompresowanie");
+                        String odczytanaLinia = odczyt.nextLine();
+                        if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
+                            System.out.println("Zakończono wczytywanie plików \n");
+                            break;
+                        } else {
+                            nazwySkompresowanychPlikow.add(odczytanaLinia);
+                            System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
+                        }
+                    }
 
+                    System.out.println("Pliki wybrane do dekompresowania");
+                    for (String nazwa : nazwySkompresowanychPlikow) {
+                        System.out.println(nazwa);
+                    }
 
-            // Pobieranie plików do dekompresowania dopóki użytkownik nie poinformuje, że to ostatni
-            List<String> nazwySkompresowanychPlikow = new ArrayList<>();
-            wystarczy = false;
-            while (wystarczy != true) {
-                System.out.println("Podaj nazwę pliku (z rozszerzeniem) do kompresowania lub 'koniec' żeby zacząć kompresję");
-
-                String odczytanaLinia = odczyt.nextLine();
-                if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
-                    System.out.println("Zakończono wczytywanie plików \n");
-                    break;
-                } else {
-                    nazwySkompresowanychPlikow.add(odczytanaLinia);
-                    System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
+                    // Dekompresowanie podanych plików
+                    for (String nazwa : nazwySkompresowanychPlikow) {
+                        StringBuilder nazwaPoDekompresji = new StringBuilder();
+                        nazwaPoDekompresji.append(nazwa);
+                        nazwaPoDekompresji.delete(nazwaPoDekompresji.length() - 5, nazwaPoDekompresji.length());
+                        nazwaPoDekompresji.append("Dekompresowany.txt");
+                        dekompresuj(nazwa, nazwaPoDekompresji.toString());
+                    }
+                    System.out.println("Zakończono dekompresowanie");
                 }
-            }
 
-            System.out.println("Pliki wybrane do dekompresowania");
-            for (String nazwa : nazwySkompresowanychPlikow) {
-                System.out.println(nazwa);
-            }
+                case "z": {
+                    System.out.println("Zamykanie programu");
+                    break;
+                }
 
-            // Dekompresowanie podanych plików
-            for (String nazwa : nazwySkompresowanychPlikow) {
-                StringBuilder nazwaPoDekompresji = new StringBuilder();
-                nazwaPoDekompresji.append(nazwa);
-                nazwaPoDekompresji.delete(nazwaPoDekompresji.length() - 5, nazwaPoDekompresji.length());
-                nazwaPoDekompresji.append("Dekompresowany.txt");
-                dekompresuj(nazwa, nazwaPoDekompresji.toString());
             }
-            System.out.println("Zakończono dekompresowanie");
-
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Błąd komunikacji z użytkownikiem");
@@ -85,8 +97,8 @@ public class AppGZIP {
     //// Metoda kompresująca plik do pliku w formacie GZIP
     private static void kompresuj(String file, String gzipFile) {
         try {
-            try(FileInputStream fis = new FileInputStream(file)) {
-                try(FileOutputStream fos = new FileOutputStream(gzipFile)) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                try (FileOutputStream fos = new FileOutputStream(gzipFile)) {
                     GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
                     byte[] buffer = new byte[1024];
                     int len;
@@ -108,7 +120,7 @@ public class AppGZIP {
 
     private static void dekompresuj(String gzipFile, String newFile) {
         try {
-            try(FileInputStream fis = new FileInputStream(gzipFile)) {
+            try (FileInputStream fis = new FileInputStream(gzipFile)) {
                 GZIPInputStream gis = new GZIPInputStream(fis);
                 FileOutputStream fos = new FileOutputStream(newFile);
                 byte[] buffer = new byte[1024];
@@ -123,7 +135,7 @@ public class AppGZIP {
                 System.out.println("Nie znalezniono pliku: " + gzipFile);
             }
         } catch (IOException e) {
-           System.out.println("Nie udało się wczytać pliku do dekompresji");
+            System.out.println("Nie udało się wczytać pliku do dekompresji");
         }
 
     }
