@@ -11,9 +11,13 @@ public class AppGZIP {
         // Otwarcie komunikacji między użytkownikiem i programem
         try (Scanner odczyt = new Scanner(System.in)) {
 
-            System.out.println("Podaj działanie: kompresja(k), dekompresja(d), zamknij program(z)");
-            String wybor = odczyt.nextLine();
             // Pętla menu głównego
+            String wybor = "start";
+            while (!wybor.equals("z")) {
+
+                System.out.println("Podaj działanie: kompresja(k), dekompresja(d), zamknij program(z)");
+                wybor = odczyt.nextLine();
+
             switch (wybor) {
                 case "k": {
                     // Pobieranie plików do kompresowania dopóki użytkownik nie poinformuje, że to ostatni
@@ -21,11 +25,14 @@ public class AppGZIP {
                     boolean wystarczy = false;
                     while (wystarczy != true) {
                         System.out.println("Podaj nazwę pliku (z rozszerzeniem) do kompresowania lub 'koniec' żeby zacząć kompresję");
-
                         String odczytanaLinia = odczyt.nextLine();
-                        if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
+
+                        if (odczytanaLinia.equals("koniec")) {
                             System.out.println("Zakończono wczytywanie plików \n");
                             break;
+                        } else if (!odczytanaLinia.matches("(.*).txt")) {
+                            System.out.println("Nieprawidłowa nazwa pliku (brak rozszerzenia .txt)");
+                            continue;
                         } else {
                             nazwyPlikow.add(odczytanaLinia);
                             System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
@@ -36,6 +43,7 @@ public class AppGZIP {
                     for (String nazwa : nazwyPlikow) {
                         System.out.println(nazwa);
                     }
+                    System.out.println();
 
                     // Kompresowanie podanych plików
                     for (String nazwa : nazwyPlikow) {
@@ -45,7 +53,8 @@ public class AppGZIP {
                         nazwaPoKompresji.append(".GZIP");
                         kompresuj(nazwa, nazwaPoKompresji.toString());
                     }
-                    System.out.println("Zakończono kompresowanie");
+                    System.out.println("Zakończono kompresowanie\n");
+                    break;
                 }
 
                 case "d": {
@@ -59,6 +68,9 @@ public class AppGZIP {
                         if (odczytanaLinia.equals("koniec") || odczytanaLinia.equals("Koniec")) {
                             System.out.println("Zakończono wczytywanie plików \n");
                             break;
+                        } else if (!odczytanaLinia.matches("(.*).GZIP")) {
+                            System.out.println("Nieprawidłowa nazwa pliku (brak rozszerzenia .GZIP)");
+                            continue;
                         } else {
                             nazwySkompresowanychPlikow.add(odczytanaLinia);
                             System.out.println("Dodano do kolejki plik: " + odczytanaLinia);
@@ -69,6 +81,7 @@ public class AppGZIP {
                     for (String nazwa : nazwySkompresowanychPlikow) {
                         System.out.println(nazwa);
                     }
+                    System.out.println();
 
                     // Dekompresowanie podanych plików
                     for (String nazwa : nazwySkompresowanychPlikow) {
@@ -78,13 +91,15 @@ public class AppGZIP {
                         nazwaPoDekompresji.append("Dekompresowany.txt");
                         dekompresuj(nazwa, nazwaPoDekompresji.toString());
                     }
-                    System.out.println("Zakończono dekompresowanie");
+                    System.out.println("Zakończono dekompresowanie\n");
+                    break;
                 }
 
                 case "z": {
-                    System.out.println("Zamykanie programu");
+                    System.out.println("\nZamykanie programu\n");
                     break;
                 }
+            }
 
             }
         } catch (Exception e) {
